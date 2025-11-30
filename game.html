@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dodge Game</title>
+  <style>
+    body { margin: 0; background: #111; overflow: hidden; }
+    #player {
+      width: 40px; height: 40px;
+      background: cyan; position: absolute; bottom: 20px;
+      left: 50%; transform: translateX(-50%);
+      border-radius: 8px;
+    }
+    .block {
+      width: 40px; height: 40px;
+      background: red; position: absolute; top: 0;
+    }
+    #score {
+      color: white; font-size: 20px; position: fixed; top: 10px; left: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="player"></div>
+<div id="score">Score: 0</div>
+
+<script>
+  const player = document.getElementById("player");
+  const scoreDisplay = document.getElementById("score");
+
+  let score = 0;
+  let playerX = window.innerWidth / 2;
+
+  document.addEventListener("mousemove", e => {
+    playerX = e.clientX;
+    player.style.left = playerX - 20 + "px";
+  });
+
+  function makeBlock() {
+    const block = document.createElement("div");
+    block.classList.add("block");
+    block.style.left = Math.random() * (window.innerWidth - 40) + "px";
+    document.body.appendChild(block);
+
+    let blockY = 0;
+    const fall = setInterval(() => {
+      blockY += 5;
+      block.style.top = blockY + "px";
+
+      // collision
+      const px = playerX;
+      const py = window.innerHeight - 60;
+      const bx = parseInt(block.style.left);
+      const by = blockY;
+
+      if (by > py - 40 && by < py + 40 && bx > px - 40 && bx < px + 40) {
+        alert("Game Over! Score: " + score);
+        location.reload();
+      }
+
+      // remove block if off screen
+      if (blockY > window.innerHeight) {
+        clearInterval(fall);
+        block.remove();
+        score++;
+        scoreDisplay.textContent = "Score: " + score;
+      }
+    }, 20);
+  }
+
+  setInterval(makeBlock, 600);
+</script>
+
+</body>
+</html>
